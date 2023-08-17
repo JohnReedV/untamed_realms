@@ -9,12 +9,14 @@ mod systems;
 mod resources;
 mod player;
 mod components;
+pub mod npc;
 
 use menu::MainMenuPlugin;
 use systems::*;
-use world::WorldPlugin;
+use world::*;
 use resources::*;
 use player::PlayerPlugin;
+pub use npc::*;
 
 fn main() {
     App::new()
@@ -32,6 +34,7 @@ fn main() {
             MainMenuPlugin,
             WorldPlugin,
             PlayerPlugin,
+            NpcPlugin,
         ))
         .add_event::<GameStart>()
         .add_event::<GameOver>()
