@@ -4,11 +4,11 @@ use bevy::{
     window::{CursorGrabMode, PrimaryWindow},
 };
 
+use crate::components::*;
 use crate::menu::components::*;
 use crate::menu::resources::*;
 use crate::menu::styles::*;
 use crate::resources::*;
-use crate::components::*;
 
 pub fn setup_cursor(
     mut windows: Query<&mut Window>,
@@ -30,7 +30,10 @@ pub fn setup_cursor(
             transform: Transform::from_translation(cursor_spawn),
             ..default()
         },
-        GameCursor { despawned: false },
+        GameCursor {
+            despawned: false,
+            position: Vec3::new(0.0, 0.0, 1.5),
+        },
     ));
 }
 
@@ -52,8 +55,11 @@ pub fn move_cursor(
 
     for (cursor_entity, mut img_style) in cursor.iter_mut() {
         if let Some(position) = window.cursor_position() {
-            img_style.left = Val::Px(position.x - 2.0);
-            img_style.bottom = Val::Px((window.height() - position.y) - 24.0);
+            let left = position.x - 2.0;
+            let bottom = (window.height() - position.y) - 24.0;
+
+            img_style.left = Val::Px(left);
+            img_style.bottom = Val::Px(bottom);
         } else {
             commands.entity(cursor_entity).despawn();
         }

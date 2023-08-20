@@ -17,6 +17,7 @@ use world::*;
 use resources::*;
 use player::PlayerPlugin;
 pub use npc::*;
+pub use bevy_mod_picking::{DefaultPickingPlugins, prelude::{DebugPickingPlugin, PickableBundle}};
 
 fn main() {
     App::new()
@@ -35,6 +36,9 @@ fn main() {
             WorldPlugin,
             PlayerPlugin,
             NpcPlugin,
+            DefaultPickingPlugins
+            .build()
+            .disable::<DebugPickingPlugin>()
         ))
         .add_event::<GameStart>()
         .add_event::<GameOver>()

@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 use rand::prelude::*;
 
+use crate::PickableBundle;
+use crate::npc::components::*;
 use crate::resources::*;
 use crate::world::components::*;
 use crate::world::resources::*;
-use crate::NPCIdentityComponent;
 
 pub const CHUNK_SIZE: i32 = 10;
 pub const TILE_SIZE: f32 = 32.0;
@@ -42,20 +43,27 @@ fn render_world(mut commands: Commands, world: Vec<Vec<Tile>>, assets: Res<Asset
     let mut id = 1;
     for row in world {
         for tile in row {
-
             if tile.data.npc {
                 id += 1;
-
+            
                 commands.spawn((
                     SpriteBundle {
                         transform: Transform::from_xyz(tile.pos.x, tile.pos.y, 0.2),
                         texture: npc_handle.clone(),
                         ..default()
                     },
-                    NPCIdentityComponent {id: id, name: "Joe".to_string()},
+                    NPCIdentityComponent {
+                        id: id,
+                        name: "Joe".to_string(),
+                    },
+                    NPCStateComponent {
+                        health: 100.0,
+                        position: Vec3::new(tile.pos.x, tile.pos.y, 0.0),
+                    },
+                    PickableBundle::default(),
                 ));
-
             }
+            
             commands.spawn((
                 SpriteBundle {
                     texture: player_handle.clone(),
@@ -71,24 +79,21 @@ fn render_world(mut commands: Commands, world: Vec<Vec<Tile>>, assets: Res<Asset
 fn generate_world() -> Vec<Vec<Tile>> {
     let mut world = Vec::new();
     let mut rng = rand::thread_rng();
-    const NPC_SPAWN_CHANCE: f32 = 0.005;
+    const NPC_SPAWN_CHANCE: f32 = 0.0005;
 
     for chunk_x in 0..WORLD_SIZE / CHUNK_SIZE {
         for chunk_y in 0..WORLD_SIZE / CHUNK_SIZE {
             for x in 0..CHUNK_SIZE {
                 let mut row = Vec::new();
                 for y in 0..CHUNK_SIZE {
-
-                    let spawn_npc: bool = rng.gen::<f32>() < NPC_SPAWN_CHANCE;
-
                     row.push(Tile {
                         pos: Position {
                             x: ((chunk_x * CHUNK_SIZE + x) as f32 - WORLD_SIZE as f32 / 2.0) * TILE_SIZE,
                             y: ((chunk_y * CHUNK_SIZE + y) as f32 - WORLD_SIZE as f32 / 2.0) * TILE_SIZE,
                         },
                         data: TileData {
-                            npc: spawn_npc
-                        }
+                            npc: rng.gen::<f32>() < NPC_SPAWN_CHANCE,
+                        },
                     });
                 }
                 world.push(row);

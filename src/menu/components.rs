@@ -15,7 +15,8 @@ pub struct OptionsButton {}
 
 #[derive(Component)]
 pub struct GameCursor {
-    pub despawned: bool
+    pub despawned: bool,
+    pub position: Vec3,
 }
 
 #[derive(Component)]

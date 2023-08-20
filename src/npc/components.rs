@@ -28,8 +28,7 @@ pub struct NPCLanguageModelComponent {
 #[derive(Component)]
 pub struct NPCStateComponent {
     pub health: f32,
-    pub position: Vec2,
-    pub status_effects: Vec<StatusEffect>,
+    pub position: Vec3,
 }
 
 #[derive(Component)]
@@ -49,3 +48,6 @@ pub enum Skill {
     Attack,
     Persuasion,
 }
+
+#[derive(Component)]
+pub struct NpcButton {}

@@ -1,12 +1,13 @@
-mod components;
+pub mod components;
 mod resources;
-mod styles;
+pub mod styles;
 mod systems;
 
 use bevy::prelude::*;
 use systems::*;
 use resources::*;
 use crate::resources::*;
+pub use styles::*;
 
 pub struct MainMenuPlugin;
 
