@@ -1,11 +1,12 @@
 use bevy::prelude::*;
 use rand::prelude::*;
 
-use crate::PickableBundle;
-use crate::npc::components::*;
-use crate::resources::*;
-use crate::world::components::*;
-use crate::world::resources::*;
+use crate::{
+    resources::*,
+    world::{components::*, resources::*},
+    npc::{NpcAnimationTimer, NpcAnimationFrame},
+    NPCIdentityComponent, NPCStateComponent, PickableBundle,
+};
 
 pub const CHUNK_SIZE: i32 = 10;
 pub const TILE_SIZE: f32 = 32.0;
@@ -37,15 +38,15 @@ pub fn despawn_world(
 }
 
 fn render_world(mut commands: Commands, world: Vec<Vec<Tile>>, assets: Res<AssetServer>) {
-    let player_handle: Handle<Image> = assets.load("sprites/floor1.png").into();
-    let npc_handle: Handle<Image> = assets.load("sprites/player.png");
+    let floor_handle: Handle<Image> = assets.load("sprites/grass.png").into();
+    let npc_handle: Handle<Image> = assets.load("sprites/npcs/idle/npc1.png");
 
     let mut id = 1;
     for row in world {
         for tile in row {
             if tile.data.npc {
                 id += 1;
-            
+
                 commands.spawn((
                     SpriteBundle {
                         transform: Transform::from_xyz(tile.pos.x, tile.pos.y, 0.2),
@@ -61,12 +62,14 @@ fn render_world(mut commands: Commands, world: Vec<Vec<Tile>>, assets: Res<Asset
                         position: Vec3::new(tile.pos.x, tile.pos.y, 0.0),
                     },
                     PickableBundle::default(),
+                    NpcAnimationTimer(Timer::from_seconds(0.5, TimerMode::Repeating)),
+                    NpcAnimationFrame {current_frame: 0}
                 ));
             }
-            
+
             commands.spawn((
                 SpriteBundle {
-                    texture: player_handle.clone(),
+                    texture: floor_handle.clone(),
                     transform: Transform::from_xyz(tile.pos.x, tile.pos.y, 0.0),
                     ..default()
                 },

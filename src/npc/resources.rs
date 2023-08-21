@@ -35,3 +35,6 @@ impl LanguageModelAPI {
         Ok(result)
     }
 }
+
+#[derive(Resource, Deref, DerefMut, Default)]
+pub struct PlayerAnimationTimer(Timer);

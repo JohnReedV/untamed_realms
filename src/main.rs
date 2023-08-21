@@ -3,21 +3,24 @@ use bevy::{
     window::{PresentMode, WindowMode},
 };
 
-mod menu;
-mod world;
-mod systems;
-mod resources;
-mod player;
 mod components;
+mod menu;
 pub mod npc;
+mod player;
+mod resources;
+mod systems;
+mod world;
 
+pub use bevy_mod_picking::{
+    prelude::{DebugPickingPlugin, PickableBundle, RaycastPickCamera, RaycastPickTarget},
+    DefaultPickingPlugins,
+};
 use menu::MainMenuPlugin;
+pub use npc::*;
+use player::PlayerPlugin;
+use resources::*;
 use systems::*;
 use world::*;
-use resources::*;
-use player::PlayerPlugin;
-pub use npc::*;
-pub use bevy_mod_picking::{DefaultPickingPlugins, prelude::{DebugPickingPlugin, PickableBundle}};
 
 fn main() {
     App::new()
@@ -36,9 +39,7 @@ fn main() {
             WorldPlugin,
             PlayerPlugin,
             NpcPlugin,
-            DefaultPickingPlugins
-            .build()
-            .disable::<DebugPickingPlugin>()
+            DefaultPickingPlugins.build().disable::<DebugPickingPlugin>(),
         ))
         .add_event::<GameStart>()
         .add_event::<GameOver>()

@@ -51,3 +51,17 @@ pub enum Skill {
 
 #[derive(Component)]
 pub struct NpcButton {}
+
+#[derive(Component)]
+pub struct PlayerAnimationIndices {
+    pub first: usize,
+    pub last: usize,
+}
+
+#[derive(Component)]
+pub struct NpcAnimationTimer(pub Timer);
+
+#[derive(Component)]
+pub struct NpcAnimationFrame {
+    pub current_frame: usize,
+}

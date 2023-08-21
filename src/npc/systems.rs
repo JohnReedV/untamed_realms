@@ -1,8 +1,7 @@
-use bevy::prelude::*;
 use crate::npc::components::*;
 use crate::resources::*;
-use bevy_mod_picking::events::{Pointer, Click};
-
+use bevy::prelude::*;
+use bevy_mod_picking::events::{Click, Pointer};
 
 pub fn despawn_npc(
     mut reader: EventReader<GameOver>,
@@ -18,7 +17,7 @@ pub fn despawn_npc(
 
 pub fn npc_interaction_system(
     mut events: EventReader<Pointer<Click>>,
-    npcs: Query<&NPCIdentityComponent>
+    npcs: Query<&NPCIdentityComponent>,
 ) {
     for event in events.iter() {
         let entity = event.target;
@@ -28,7 +27,31 @@ pub fn npc_interaction_system(
     }
 }
 
+pub fn animate_npc(
+    time: Res<Time>,
+    asset_server: Res<AssetServer>,
+    mut sprite_query: Query<(&mut Handle<Image>, &mut Sprite), With<NPCIdentityComponent>>,
+    mut animation_query: Query<(&mut NpcAnimationTimer, &mut NpcAnimationFrame)>,
+) {
+    let texture_paths = [
+        "sprites/npcs/idle/npc1.png",
+        "sprites/npcs/idle/npc2.png",
+        "sprites/npcs/idle/npc3.png",
+    ];
 
+    for (mut timer, mut frame) in animation_query.iter_mut() {
+
+        for (mut sprite_material_handle, _) in sprite_query.iter_mut() {
+            timer.0.tick(time.delta());
+
+            if timer.0.finished() {
+                frame.current_frame = (frame.current_frame + 1) % texture_paths.len();
+                *sprite_material_handle = asset_server.load(texture_paths[frame.current_frame]);
+                timer.0.reset();
+            }
+        }
+    }
+}
 
 
 
