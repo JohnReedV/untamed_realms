@@ -38,3 +38,18 @@ impl LanguageModelAPI {
 
 #[derive(Resource, Deref, DerefMut, Default)]
 pub struct PlayerAnimationTimer(Timer);
+
+#[derive(Resource)]
+pub struct NPCInteractionState {
+    pub active: bool,
+    pub text: String,
+}
+
+impl Default for NPCInteractionState {
+    fn default() -> Self {
+        Self {
+            active: false,
+            text: String::new(),
+        }
+    }
+}

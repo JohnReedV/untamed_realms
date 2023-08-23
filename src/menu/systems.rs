@@ -1,7 +1,7 @@
 use bevy::{
     app::AppExit,
     prelude::*,
-    window::{CursorGrabMode, PrimaryWindow},
+    window::PrimaryWindow,
 };
 
 use crate::components::*;
@@ -10,61 +10,6 @@ use crate::menu::resources::*;
 use crate::menu::styles::*;
 use crate::resources::*;
 
-pub fn setup_cursor(
-    mut windows: Query<&mut Window>,
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
-    let mut window: Mut<Window> = windows.single_mut();
-    window.cursor.visible = false;
-    let cursor_spawn: Vec3 = Vec3::ZERO;
-
-    commands.spawn((
-        ImageBundle {
-            image: asset_server.load("sprites/cursor.png").into(),
-            style: Style {
-                position_type: PositionType::Absolute,
-                ..default()
-            },
-            z_index: ZIndex::Global(15),
-            transform: Transform::from_translation(cursor_spawn),
-            ..default()
-        },
-        GameCursor {
-            despawned: false,
-            position: Vec3::new(0.0, 0.0, 1.5),
-        },
-    ));
-}
-
-pub fn move_cursor(
-    mut windows: Query<&mut Window>,
-    mut cursor: Query<(Entity, &mut Style), With<GameCursor>>,
-    game_state_const: Res<State<GameState>>,
-    mut commands: Commands,
-) {
-    let mut window: Mut<Window> = windows.single_mut();
-    match *game_state_const.get() {
-        GameState::Game => {
-            window.cursor.grab_mode = CursorGrabMode::Locked;
-        }
-        _ => {
-            window.cursor.grab_mode = CursorGrabMode::None;
-        }
-    }
-
-    for (cursor_entity, mut img_style) in cursor.iter_mut() {
-        if let Some(position) = window.cursor_position() {
-            let left = position.x - 2.0;
-            let bottom = (window.height() - position.y) - 24.0;
-
-            img_style.left = Val::Px(left);
-            img_style.bottom = Val::Px(bottom);
-        } else {
-            commands.entity(cursor_entity).despawn();
-        }
-    }
-}
 
 pub fn fix_menu_first_game(
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -434,3 +379,59 @@ pub fn fps_system(
         ));
     }
 }
+
+// pub fn setup_cursor(
+//     mut windows: Query<&mut Window>,
+//     mut commands: Commands,
+//     asset_server: Res<AssetServer>,
+// ) {
+//     let mut window: Mut<Window> = windows.single_mut();
+//     window.cursor.visible = false;
+//     let cursor_spawn: Vec3 = Vec3::ZERO;
+
+//     commands.spawn((
+//         ImageBundle {
+//             image: asset_server.load("sprites/cursor.png").into(),
+//             style: Style {
+//                 position_type: PositionType::Absolute,
+//                 ..default()
+//             },
+//             z_index: ZIndex::Global(15),
+//             transform: Transform::from_translation(cursor_spawn),
+//             ..default()
+//         },
+//         GameCursor {
+//             despawned: false,
+//             position: Vec3::new(0.0, 0.0, 1.5),
+//         },
+//     ));
+// }
+
+// pub fn move_cursor(
+//     mut windows: Query<&mut Window>,
+//     mut cursor: Query<(Entity, &mut Style), With<GameCursor>>,
+//     game_state_const: Res<State<GameState>>,
+//     mut commands: Commands,
+// ) {
+//     let mut window: Mut<Window> = windows.single_mut();
+//     match *game_state_const.get() {
+//         GameState::Game => {
+//             window.cursor.grab_mode = CursorGrabMode::Locked;
+//         }
+//         _ => {
+//             window.cursor.grab_mode = CursorGrabMode::None;
+//         }
+//     }
+
+//     for (cursor_entity, mut img_style) in cursor.iter_mut() {
+//         if let Some(position) = window.cursor_position() {
+//             let left = position.x - 2.0;
+//             let bottom = (window.height() - position.y) - 24.0;
+
+//             img_style.left = Val::Px(left);
+//             img_style.bottom = Val::Px(bottom);
+//         } else {
+//             commands.entity(cursor_entity).despawn();
+//         }
+//     }
+// }

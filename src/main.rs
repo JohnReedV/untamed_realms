@@ -2,15 +2,6 @@ use bevy::{
     prelude::*,
     window::{PresentMode, WindowMode},
 };
-
-mod components;
-mod menu;
-pub mod npc;
-mod player;
-mod resources;
-mod systems;
-mod world;
-
 pub use bevy_mod_picking::{
     prelude::{DebugPickingPlugin, PickableBundle, RaycastPickCamera, RaycastPickTarget},
     DefaultPickingPlugins,
@@ -21,6 +12,15 @@ use player::PlayerPlugin;
 use resources::*;
 use systems::*;
 use world::*;
+use bevy_egui::EguiPlugin;
+
+mod components;
+mod menu;
+pub mod npc;
+mod player;
+mod resources;
+mod systems;
+mod world;
 
 fn main() {
     App::new()
@@ -35,6 +35,7 @@ fn main() {
                 }),
                 ..default()
             }),
+            EguiPlugin,
             MainMenuPlugin,
             WorldPlugin,
             PlayerPlugin,

@@ -17,7 +17,6 @@ impl Plugin for MainMenuPlugin {
         .init_resource::<FixMenuTimer>()
         .init_resource::<DrawCordsTracker>()
         .init_resource::<FpsTracker>()
-        .add_systems(Startup, setup_cursor)
         .add_systems(OnEnter(GameState::Menu), spawn_main_menu)
         .add_systems(OnEnter(GameState::Paused), spawn_main_menu) 
             .add_systems(
@@ -29,7 +28,6 @@ impl Plugin for MainMenuPlugin {
                     interact_options_button,
                     despawn_main_menu.run_if(in_state(GameState::Game)),
                     pause_game.run_if(not(in_state(GameState::Menu))),
-                    move_cursor,
                     draw_cords.run_if(in_state(GameState::Game)),
                     fps_system,
                 ),
