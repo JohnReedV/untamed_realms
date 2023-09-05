@@ -1,5 +1,6 @@
 use crate::components::*;
 use crate::resources::*;
+use crate::NPCInteractionState;
 use crate::PlayerAnimationIndices;
 use bevy::prelude::*;
 
@@ -20,7 +21,8 @@ pub fn spawn_player(
         let texture_atlas =
             TextureAtlas::from_grid(player_handle, sprite_size, columns, rows, None, None);
         let texture_atlas_handle: Handle<TextureAtlas> = texture_atlases.add(texture_atlas);
-        let animation_indices: PlayerAnimationIndices = PlayerAnimationIndices { first: 1, last: 2 };
+        let animation_indices: PlayerAnimationIndices =
+            PlayerAnimationIndices { first: 1, last: 2 };
 
         commands.spawn((
             SpriteSheetBundle {
@@ -50,8 +52,10 @@ pub fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_query: Query<(&mut Transform, &mut TextureAtlasSprite), With<Player>>,
     mut camera_query: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>,
+    interaction_state: Res<NPCInteractionState>,
     time: Res<Time>,
 ) {
+    if interaction_state.active { return; }
     if let Ok((mut transform, mut sprite)) = player_query.get_single_mut() {
         let mut direction = Vec3::ZERO;
 

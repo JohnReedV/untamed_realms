@@ -9,6 +9,7 @@ rand="0.8.5"
 reqwest = {version = "0.11.18", features = ["json"]}
 bevy_mod_picking = { version = "0.14.0", git = "https://github.com/bardt/bevy_mod_picking.git", rev = "7ecb60e08735ce82f9ff03ba5adb434c1e336afd" }
 bevy_egui = "0.21.0"
+dotenv = "0.15.0"
 
 [profile.dev]
 opt-level = 1

@@ -15,9 +15,9 @@ impl Plugin for NpcPlugin {
     fn build(&self, app: &mut App) {
         app.add_state::<Weather>()
             .init_resource::<WorldState>()
-            .init_resource::<LanguageModelAPI>()
             .init_resource::<PlayerAnimationTimer>()
             .init_resource::<NPCInteractionState>()
+            .init_resource::<LanguageModelAPI>()
             .add_systems(OnEnter(GameState::Menu), despawn_npc)
             .add_systems(
                 Update,

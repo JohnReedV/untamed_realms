@@ -34,6 +34,7 @@ pub fn npc_interaction_ui_system(
     mut egui_ctx: Query<&mut EguiContext>,
     mut interaction_state: ResMut<NPCInteractionState>,
     windows: Query<&mut Window>,
+    keyboard_input: Res<Input<KeyCode>>,
 ) {
     let mut egui_ctx = egui_ctx.single_mut();
     let ctx = egui_ctx.get_mut();
@@ -50,9 +51,10 @@ pub fn npc_interaction_ui_system(
         egui::Window::new("Interaction").default_pos(pos).show(ctx, |ui| {
             ui.label("Enter your text:");
             ui.text_edit_singleline(&mut interaction_state.text);
-            if ui.button("Submit").clicked() {
+            if ui.button("Submit").clicked() || keyboard_input.pressed(KeyCode::Return) {
                 println!("User input: {}", interaction_state.text);
                 interaction_state.active = false;
+                interaction_state.text = String::new();
             }
         });
     }
@@ -81,6 +83,10 @@ pub fn animate_npc(
             }
         }
     }
+}
+
+pub fn fill_langugage_model_api() {
+    
 }
 
 // pub fn npc_click_detection_system(
