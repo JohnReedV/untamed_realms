@@ -4,6 +4,11 @@ use crate::NPCInteractionState;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use bevy_mod_picking::events::{Click, Pointer};
+use openai_rust::{
+    chat::{ChatArguments, Message},
+    Client,
+};
+use std::thread;
 
 pub fn despawn_npc(
     mut reader: EventReader<GameOver>,
@@ -48,15 +53,26 @@ pub fn npc_interaction_ui_system(
             (window.height() - egui_window_size.y) / 2.0,
         );
 
-        egui::Window::new("Interaction").default_pos(pos).show(ctx, |ui| {
-            ui.label("Enter your text:");
-            ui.text_edit_singleline(&mut interaction_state.text);
-            if ui.button("Submit").clicked() || keyboard_input.pressed(KeyCode::Return) {
-                println!("User input: {}", interaction_state.text);
-                interaction_state.active = false;
-                interaction_state.text = String::new();
-            }
-        });
+        egui::Window::new("Interaction")
+            .default_pos(pos)
+            .show(ctx, |ui| {
+                ui.label("Enter your text:");
+                ui.text_edit_singleline(&mut interaction_state.text);
+                if ui.button("Submit").clicked() || keyboard_input.pressed(KeyCode::Return) {
+                    println!("User input: {}", interaction_state.text);
+
+                    let text: String = interaction_state.text.clone();
+                    thread::spawn(move || {
+                        let runtime = tokio::runtime::Runtime::new().unwrap();
+                        runtime.block_on(async {
+                            let response = send_prompt(text).await;
+                            println!("Response: {}", response);
+                        });
+                    });
+                    interaction_state.active = false;
+                    interaction_state.text = String::new();
+                }
+            });
     }
 }
 
@@ -85,8 +101,16 @@ pub fn animate_npc(
     }
 }
 
-pub fn fill_langugage_model_api() {
-    
+pub async fn send_prompt(prompt: String) -> String {
+    let client = Client::new(&std::env::var("OPEN_AI_KEY").unwrap());
+    let args = ChatArguments::new(
+        "gpt-3.5-turbo",
+        vec![Message {
+            role: "user".to_owned(),
+            content: prompt,
+        }],
+    );
+    return client.create_chat(args).await.unwrap().to_string();
 }
 
 // pub fn npc_click_detection_system(
